@@ -1,25 +1,8 @@
-# from sushigo.engine import SushiGoGame
-# from sushigo.agents import RandomAgent
-
-
-
-# if __name__ == "__main__":
-#     game = SushiGoGame(num_players=4, seed=123)
-
-#     agents = [RandomAgent(seed=i) for i in range(4)]
-
-#     while not game.is_game_over():
-#         actions = {}
-#         for p in range(game.num_players):
-#             if game.hands[p]:
-#                 actions[p] = agents[p].select_action(game, p)
-
-#         game.play_turn(actions)
-
 """
 Main script for running Sushi Go simulations.
 
 Demonstrates how to run games with different agent combinations.
+For comprehensive statistics and visualizations, use tournament_stats.py
 """
 
 from sushigo.engine import SushiGoGame
@@ -28,7 +11,8 @@ from agents import (
     EVMaximizerAgent, 
     SetCompletionAgent, 
     MetaStrategyAgent,
-    QLearningAgent
+    QLearningAgent,
+    FastMCTSAgent
 )
 
 
@@ -95,7 +79,8 @@ def run_agent_tournament(num_games=10):
         ("Random", RandomAgent),
         ("EV-Maximizer", EVMaximizerAgent),
         ("Set-Completion", SetCompletionAgent),
-        ("Meta-Strategy", MetaStrategyAgent)
+        ("Meta-Strategy", MetaStrategyAgent),
+        ("MCTS (Fast)", FastMCTSAgent)  # Added MCTS
         # Note: Q-Learning excluded unless you have a trained model
         # To include: ("Q-Learning", lambda seed: load_trained_q_agent())
     ]
@@ -104,10 +89,13 @@ def run_agent_tournament(num_games=10):
     total_scores = {name: 0 for name, _ in agent_types}
     wins = {name: 0 for name, _ in agent_types}
     
+    print("\nNote: MCTS will make games slower (searching 100 future states per move)")
+    print()
+    
     for game_num in range(num_games):
-        print(f"\nGame {game_num + 1}/{num_games}...")
+        print(f"Game {game_num + 1}/{num_games}...", end=" ", flush=True)
         
-        game = SushiGoGame(num_players=4, seed=game_num)
+        game = SushiGoGame(num_players=5, seed=game_num)
         agents = [AgentClass(seed=game_num + i) for i, (_, AgentClass) in enumerate(agent_types)]
         
         # Run game
@@ -127,7 +115,7 @@ def run_agent_tournament(num_games=10):
         winner_name = agent_types[winner_idx][0]
         wins[winner_name] += 1
         
-        print(f"  Winner: {winner_name} with {game.scores[winner_idx]} points")
+        print(f"Winner: {winner_name}")
     
     # Print tournament results
     print("\n" + "=" * 60)
@@ -254,4 +242,4 @@ if __name__ == "__main__":
     # run_all_random_baseline()
     
     # 4. Tournament with trained Q-Learning agent (uncomment after training)
-    run_with_trained_qlearning()
+    # run_with_trained_qlearning()

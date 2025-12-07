@@ -13,11 +13,15 @@ from .ev_maximizer import EVMaximizerAgent
 from .set_completion import SetCompletionAgent
 from .meta_strategy import MetaStrategyAgent
 from .q_learning import QLearningAgent
+from .mcts import MCTSAgent, FastMCTSAgent, StrongMCTSAgent
 
 __all__ = [
     'RandomAgent',
     'EVMaximizerAgent', 
     'SetCompletionAgent',
     'MetaStrategyAgent',
-    'QLearningAgent'
+    'QLearningAgent',
+    'MCTSAgent',
+    'FastMCTSAgent',
+    'StrongMCTSAgent'
 ]
